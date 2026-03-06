@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Notes App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="grid"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">N</div>
+      <div class="brandText">
+        <div class="brandTitle">Notes</div>
+        <div class="brandSub">Modern • Fast • Simple</div>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Tabs">
+      <button class="tab is-active" role="tab" aria-selected="true" data-tab="create">Create</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="browse">Browse</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="stats">Stats</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- CREATE -->
+    <section class="panel is-active" data-panel="create" role="tabpanel">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Create a note</h2>
+            <p class="muted">Keep it short. Tag it. Find it later.</p>
+          </div>
+          <div class="hint">
+            <span class="dot"></span>
+            <span>Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to save</span>
+          </div>
+        </div>
+
+        <form id="noteForm" class="form">
+          <label class="field">
+            <span class="label">Title</span>
+            <input id="title" type="text" required maxlength="120" placeholder="e.g., Meeting notes" />
+          </label>
+
+          <label class="field">
+            <span class="label">Body</span>
+            <textarea id="body" rows="5" maxlength="2000" placeholder="Write your note..."></textarea>
+            <div class="metaRow">
+              <span class="muted"><span id="bodyCount">0</span>/2000</span>
+              <span class="muted">Markdown not enabled</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="label">Tags (comma separated)</span>
+            <input id="tags" type="text" placeholder="work, personal, ideas" />
+          </label>
+
+          <div class="actions">
+            <button class="btn primary" type="submit">Save note</button>
+            <button class="btn" type="reset" id="clearBtn">Clear</button>
+            <div class="spacer"></div>
+            <button class="btn ghost" type="button" id="goBrowseBtn">Go to Browse</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card subtle">
+        <div class="quick">
+          <div class="quickItem">
+            <div class="quickIcon">⚡</div>
+            <div>
+              <div class="quickTitle">Fast</div>
+              <div class="muted">Instant refresh + smooth UI</div>
+            </div>
+          </div>
+          <div class="quickItem">
+            <div class="quickIcon">🔎</div>
+            <div>
+              <div class="quickTitle">Search</div>
+              <div class="muted">Filter by tag + search text</div>
+            </div>
+          </div>
+          <div class="quickItem">
+            <div class="quickIcon">🧹</div>
+            <div>
+              <div class="quickTitle">Clean</div>
+              <div class="muted">Simple design, no clutter</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BROWSE -->
+    <section class="panel" data-panel="browse" role="tabpanel" aria-hidden="true">
+      <div class="card">
+        <div class="browseHead">
+          <div>
+            <h2>Your notes</h2>
+            <p class="muted">Search in title/body/tags. Filter by a single tag.</p>
+          </div>
+
+          <div class="toolbar">
+            <div class="searchBox">
+              <span class="icon" aria-hidden="true">⌕</span>
+              <input id="searchInput" type="search" placeholder="Search notes..." autocomplete="off" />
+              <button class="iconBtn" type="button" id="clearSearchBtn" aria-label="Clear search">×</button>
+            </div>
+
+            <div class="tagBox">
+              <span class="icon" aria-hidden="true">#</span>
+              <input id="tagFilterInput" type="text" placeholder="Tag filter (optional)" autocomplete="off" />
+            </div>
+
+            <button class="btn" type="button" id="refreshBtn">Refresh</button>
+          </div>
+        </div>
+
+        <div class="bar">
+          <div class="pill"><strong id="notesCount">0</strong> notes</div>
+          <div class="pill"><strong id="tagCount">0</strong> tags</div>
+          <div class="pill muted">Tip: click a card to expand</div>
+        </div>
+
+        <div id="notesGrid" class="gridNotes" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="panel" data-panel="stats" role="tabpanel" aria-hidden="true">
+      <div class="card">
+        <div class="statsHead">
+          <div>
+            <h2>Stats</h2>
+            <p class="muted">A quick overview of your notes & tags.</p>
+          </div>
+          <button class="btn" type="button" id="statsRefreshBtn">Update</button>
+        </div>
+
+        <div class="statsGrid">
+          <div class="statCard">
+            <div class="statLabel">Total notes</div>
+            <div class="statValue" id="statTotal">0</div>
+          </div>
+          <div class="statCard">
+            <div class="statLabel">Tags used</div>
+            <div class="statValue" id="statTags">0</div>
+          </div>
+          <div class="statCard">
+            <div class="statLabel">Most used tag</div>
+            <div class="statValue" id="statTopTag">—</div>
+          </div>
+        </div>
+
+        <div class="card subtle">
+          <h3 class="miniTitle">Top tags</h3>
+          <div id="topTags" class="topTags"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="muted">Notes App • Express + MongoDB</span>
+    <span class="muted">|</span>
+    <span class="muted">Shortcuts: <kbd>Ctrl</kbd>+<kbd>Enter</kbd> save • <kbd>Ctrl</kbd>+<kbd>K</kbd> search</span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
